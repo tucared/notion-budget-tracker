@@ -125,7 +125,7 @@ resource "google_cloudfunctions2_function" "this" {
   service_config {
     max_instance_count    = 1
     available_memory      = "256Mi"
-    timeout_seconds       = 60
+    timeout_seconds       = 300
     service_account_email = google_service_account.cloud_function.email
     environment_variables = {
       PROJECT_ID                       = var.project_id
