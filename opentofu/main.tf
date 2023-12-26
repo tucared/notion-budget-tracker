@@ -1,3 +1,7 @@
+# ----------------
+# Data ingestion
+# ----------------
+
 resource "google_secret_manager_secret" "notion" {
   secret_id = var.gsm_notion_secret_name
 
@@ -191,5 +195,51 @@ resource "google_cloud_scheduler_job" "full_refresh" {
       service_account_email = google_service_account.cloud_scheduler.email
       audience              = google_cloudfunctions2_function.this.service_config[0].uri
     }
+  }
+}
+
+# ----------------
+# Data modeling
+# ----------------
+
+# Biquery table stg_transactions
+resource "google_bigquery_table" "stg_transactions" {
+  dataset_id                 = google_bigquery_dataset.this.dataset_id
+  project                    = var.project_id
+  table_id                   = "stg_transactions"
+  view {
+    query = <<EOT
+      WITH
+        transactions AS (
+        SELECT
+          * EXCEPT(row_number)
+        FROM (
+          SELECT
+            *,
+            ROW_NUMBER() OVER (PARTITION BY id ORDER BY last_edited_time DESC) row_number
+          FROM
+            `${local.bq_table_id}`)
+        WHERE
+          row_number = 1)
+      SELECT
+        id,
+        url,
+        created_by,
+        parent,
+        archived,
+        STRUCT<`date` date,
+        title string,
+        amount float64,
+        category string>(properties.`Date`.`date`.start,
+          properties.Name.title[0].plain_text,
+          properties.Amount.number,
+          properties.Category.`select`.name) AS properties,
+        last_edited_by,
+        last_edited_time,
+        created_time
+      FROM
+        transactions
+    EOT
+    use_legacy_sql = false
   }
 }
