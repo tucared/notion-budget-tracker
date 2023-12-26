@@ -13,7 +13,7 @@ variable "notion_secret_value" {
   type        = string
 }
 
-variable "bq_dataset_id" {
+variable "bq_datalake_dataset_id" {
   description = "ID of BigQuery dataset containing Notion raw data loaded from Cloud Function"
   type        = string
   default     = "budget"
@@ -116,6 +116,6 @@ variable "zone" {
 }
 
 locals {
-  bq_table_id          = join(".", [var.project_id, var.bq_dataset_id, var.bq_notion_table_name])
+  bq_table_id          = join(".", [var.project_id, var.bq_datalake_dataset_id, var.bq_notion_table_name])
   tofu_service_account = "${var.sa_tofu}@${var.project_id}.iam.gserviceaccount.com"
 }

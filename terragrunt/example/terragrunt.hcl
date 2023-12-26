@@ -42,7 +42,7 @@ inputs = {
     }
   }
 
-  bq_dataset_id        = local.env_vars.bq_dataset_id
-  bq_location          = local.env_vars.bq_location
-  bq_notion_table_name = local.env_vars.bq_notion_table_name
+  bq_datalake_dataset_id = local.env_vars.bq_datalake_dataset_id
+  bq_location            = local.env_vars.bq_location
+  bq_notion_table_name   = local.env_vars.bq_notion_table_name
 }

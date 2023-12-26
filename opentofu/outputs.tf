@@ -10,7 +10,7 @@ output "bq_table_id" {
 
 output "bq_table_id_colon" {
   description = "Name of destination table for Notion data, colon style"
-  value       = "${var.project_id}:${var.bq_dataset_id}.${var.bq_notion_table_name}"
+  value       = "${var.project_id}:${var.bq_datalake_dataset_id}.${var.bq_notion_table_name}"
 }
 
 output "function_name" {

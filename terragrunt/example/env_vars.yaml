@@ -22,6 +22,6 @@ cloud_schedulers_parameters:
   full_refresh_scheduler:
     schedule: "30 0 * * *" # every day at 00:30 UTC
 
-bq_dataset_id: budget
+bq_datalake_dataset_id: budget
 bq_location: EU
 bq_notion_table_name: raw_transactions__duplicated
