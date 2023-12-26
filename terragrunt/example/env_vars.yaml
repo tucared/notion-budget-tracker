@@ -23,5 +23,6 @@ cloud_schedulers_parameters:
     schedule: "30 0 * * *" # every day at 00:30 UTC
 
 bq_dataset_id: budget
-bq_location: EU
+# https://github.com/evidence-dev/evidence/issues/1376
+bq_location: US
 bq_notion_table_name: raw_transactions__duplicated
