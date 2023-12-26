@@ -23,8 +23,8 @@ resource "google_secret_manager_secret_version" "notion" {
   secret_data = var.notion_secret_value
 }
 
-resource "google_bigquery_dataset" "this" {
-  dataset_id                 = var.bq_dataset_id
+resource "google_bigquery_dataset" "datalake" {
+  dataset_id                 = var.bq_datalake_dataset_id
   location                   = var.bq_location
   friendly_name              = "Notion dataset"
   delete_contents_on_destroy = true
@@ -68,13 +68,13 @@ resource "google_secret_manager_secret_iam_member" "cloud_function" {
 }
 
 resource "google_bigquery_dataset_iam_member" "cloud_function_editor" {
-  dataset_id = google_bigquery_dataset.this.dataset_id
+  dataset_id = google_bigquery_dataset.datalake.dataset_id
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:${google_service_account.cloud_function.email}"
 }
 
 resource "google_bigquery_dataset_iam_member" "cloud_function_viewer" {
-  dataset_id = google_bigquery_dataset.this.dataset_id
+  dataset_id = google_bigquery_dataset.datalake.dataset_id
   role       = "roles/bigquery.dataViewer"
   member     = "serviceAccount:${google_service_account.cloud_function.email}"
 }
@@ -204,7 +204,7 @@ resource "google_cloud_scheduler_job" "full_refresh" {
 
 # Biquery table stg_transactions
 resource "google_bigquery_table" "stg_transactions" {
-  dataset_id                 = google_bigquery_dataset.this.dataset_id
+  dataset_id                 = google_bigquery_dataset.datalake.dataset_id
   project                    = var.project_id
   table_id                   = "stg_transactions"
   view {
