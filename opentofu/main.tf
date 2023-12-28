@@ -146,9 +146,9 @@ resource "google_service_account" "cloud_scheduler" {
 # https://github.com/hashicorp/terraform-provider-google/issues/15264
 resource "google_cloud_run_service_iam_binding" "binding" {
   location = google_cloudfunctions2_function.this.location
-  project = google_cloudfunctions2_function.this.project
-  service = google_cloudfunctions2_function.this.name
-  role = "roles/run.invoker"
+  project  = google_cloudfunctions2_function.this.project
+  service  = google_cloudfunctions2_function.this.name
+  role     = "roles/run.invoker"
   members = [
     "serviceAccount:${google_service_account.cloud_scheduler.email}"
   ]
@@ -190,4 +190,31 @@ resource "google_cloud_scheduler_job" "full_refresh" {
       audience              = google_cloudfunctions2_function.this.service_config[0].uri
     }
   }
+}
+
+resource "random_id" "evidence_bucket_prefix" {
+  byte_length = 8
+}
+
+# Cloud storage bucket containing static website source
+resource "google_storage_bucket" "evidence" {
+  name          = "${random_id.evidence_bucket_prefix.hex}-evidence"
+  force_destroy = true
+  location      = var.region
+
+  uniform_bucket_level_access = true
+}
+
+resource "google_app_engine_application" "this" {
+  id          = var.project_id
+  name        = var.project_id
+  project     = var.project_id
+  location_id = var.region
+
+  # Default bucket to evidence_static_website bucket
+  # database_type = "CLOUD_DATASTORE_COMPATIBILITY"
+  default_bucket = google_storage_bucket.evidence_static_website.name
+
+  # Load to bucket local folder files ../evidence/build/
+  
 }
