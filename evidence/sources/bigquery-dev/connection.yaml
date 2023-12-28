@@ -1,5 +1,5 @@
 # This file was automatically generated
-name: bigquery-dev
+name: bigquery_dev
 type: bigquery
 options:
-  authenticator: gcloud-cli
+  authenticator: service-account

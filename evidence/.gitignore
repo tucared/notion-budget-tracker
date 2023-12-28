@@ -6,3 +6,8 @@ node_modules
 static/data
 *.options.yaml
 .vscode/settings.json
+
+build/
+node_modules/
+
+gcp_key.json
