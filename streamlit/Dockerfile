@@ -1,4 +1,4 @@
-FROM python:3.12
+FROM python:3.12-slim-bookworm
 
 # Expose port you want your app on
 EXPOSE 8080
