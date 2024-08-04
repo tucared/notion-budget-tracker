@@ -39,4 +39,6 @@
 
 ## Run the app locally
 
-`streamlit run app.py`
+In python environment: `streamlit run app.py`
+
+In dockerised environment: `docker-compose up --build`
