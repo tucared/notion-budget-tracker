@@ -47,6 +47,8 @@ In dockerised environment: `docker-compose up --build`
 
 ## Publish to Cloud Run
 
+### Publish image to Artifact Registry
+
 1. Set variables
 
     ```shell
@@ -61,14 +63,15 @@ In dockerised environment: `docker-compose up --build`
     gcloud auth configure-docker $LOCATION-docker.pkg.dev
     ```
 
-3. Build and tag local image
+3. Build and tag local image (arch linux)
 
     ```shell
     export REPOSITORY=streamlit
     export IMAGE=streamlit_app
+    export IMAGE_URL=$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE
 
-    docker build -f Dockerfile -t $IMAGE .
-    docker tag $IMAGE $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE
+    docker build -f Dockerfile -t $IMAGE . --platform linux/amd64
+    docker tag $IMAGE $IMAGE_URL
     ```
 
 4. Create repository on Google Artifact Registry
@@ -86,20 +89,36 @@ In dockerised environment: `docker-compose up --build`
 5. Push image to Google Artifact Registry
 
     ```shell
-    docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE
+    docker push $IMAGE_URL
     ```
 
 6. Check image is pushed
 
     ```shell
-    gcloud artifacts docker images list \
-        $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE
+    gcloud artifacts docker images list $IMAGE_URL
     ```
+
+### Deploy Cloud Run app
+
+```shell
+export REGION=europe-west9
+export SERVICE_NAME=streamlit-app
+gcloud run deploy $SERVICE_NAME --image $IMAGE_URL --region $REGION
+
+gcloud run services list
+
+```
 
 ## Cleanup
 
-1. Delete image from Container registry
+Delete Cloud Run service
 
-    ```shell
-    gcloud artifacts docker images delete $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE --delete-tags
-    ```
+```shell
+gcloud run services delete $SERVICE_NAME --region $REGION
+```
+
+Delete image from Container registry
+
+```shell
+gcloud artifacts docker images delete $IMAGE_URL --delete-tags
+```
