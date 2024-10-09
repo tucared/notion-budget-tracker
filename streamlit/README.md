@@ -100,14 +100,46 @@ In dockerised environment: `docker-compose up --build`
 
 ### Deploy Cloud Run app
 
-```shell
-export REGION=europe-west9
-export SERVICE_NAME=streamlit-app
-gcloud run deploy $SERVICE_NAME --image $IMAGE_URL --region $REGION
+1. Create service account
 
-gcloud run services list
+    ```shell
+    # Set variables
+    export PROJECT_ID=XXX
+    export SERVICE_ACCOUNT_NAME="cloud-run-sa"
+    export DATASET_ID="notion_cloud_function"
+    export DATASET_LOCATION="US"
 
-```
+    # Create service account
+    gcloud iam service-accounts create $SERVICE_ACCOUNT_NAME \
+        --project=$PROJECT_ID \
+        --display-name="Cloud Run Service Account"
+
+    # Add Data Viewer role to the service account for the specific dataset
+    bq show \
+        --format=prettyjson \
+        $PROJECT_ID:$DATASET_ID > bq_policy.json
+
+
+    gcloud projects add-iam-policy-binding $PROJECT_ID \
+        --member="serviceAccount:$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+        --role="roles/bigquery.dataViewer" \
+        --condition="resource.type=bigquery.googleapis.com/Dataset AND resource.name=//bigquery.googleapis.com/projects/$PROJECT_ID/datasets/monthly-finance.notion_cloud_function AND resource.location=$DATASET_LOCATION"
+
+    # Delete service account
+    gcloud iam service-accounts delete "$SERVICE_ACCOUNT_NAME@$PROJECT_ID.iam.gserviceaccount.com" \
+        --project=$PROJECT_ID \
+        --quiet
+    ```
+
+2. Create Cloud Run instance
+
+    ```shell
+    export REGION=europe-west9
+    export SERVICE_NAME=streamlit-app
+    gcloud run deploy $SERVICE_NAME --image $IMAGE_URL --region $REGION
+
+    gcloud run services list
+    ```
 
 ## Cleanup
 
