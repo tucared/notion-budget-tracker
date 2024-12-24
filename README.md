@@ -92,6 +92,7 @@ The main requirements for the project are:
 - [![OpenTofu][OpenTofu.org]][OpenTofu-url]
 - [![Terragrunt][Terragrunt.io]][Terragrunt-url]
 - [![Python][Python.org]][Python-url]
+- [![Streamlit][Streamlit.io]][Streamlit-url]
 - [![Notion][Notion.so]][Notion-url] _(free tier)_
 - [![Google Cloud][Console.cloud.google.com]][Google-Cloud-url] _(free tier)_
 
@@ -242,14 +243,25 @@ To get a copy of the project up and running follow the steps below.
 
 #### Deploy your infrastructure
 
-```shell
-terragrunt apply
+1. Deploy infrastructure on cloud
 
-# Remote state GCS bucket ...-tfstate does not exist [...]. Would you like Terragrunt to create it? (y/n) y
+    ```shell
+    terragrunt apply
 
-# Do you want to perform these actions?
-# Enter a value: yes
-```
+    # Remote state GCS bucket ...-tfstate does not exist [...]. Would you like Terragrunt to create it? (y/n) y
+
+    # Do you want to perform these actions?
+    # Enter a value: yes
+    ```
+
+2. Trigger streamlit app build and deploy
+
+    ```shell
+    gcloud builds triggers run $(terragrunt output streamlit_build_trigger_name | sed 's/"//g') \
+        --region=$(terragrunt output streamlit_build_trigger_region | sed 's/"//g')
+
+    gcloud builds list --region=$(terragrunt output streamlit_build_trigger_region | sed 's/"//g')
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -413,8 +425,7 @@ sequenceDiagram
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Add data modelling (local [dbt-core](https://github.com/dbt-labs/dbt-core)?)
-- [ ] Add visualisation with [Evidence.dev]
+- [ ] Add data modelling (e.g., local [dbt-core](https://github.com/dbt-labs/dbt-core), Streamlit directly)
 - [ ] Add Automated transaction collection with [SimpleFIN Bridge]
 - [ ] Add budgeting feature (i.e., target versus actual)
 
@@ -575,6 +586,8 @@ Tucared - <1v8ufskf@duck.com>
 [Terragrunt-url]: https://terragrunt.gruntwork.io/
 [Python.org]: https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue
 [Python-url]: https://www.python.org/
+[Streamlit.io]: https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=blue
+[Streamlit-url]: https://streamlit.io/
 [Notion.so]: https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white
 [Notion-url]: https://www.notion.so/
 [Console.cloud.google.com]: https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white
