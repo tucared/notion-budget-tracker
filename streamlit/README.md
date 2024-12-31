@@ -17,6 +17,8 @@
    - In dockerised environment: `docker-compose up --build`
 
 2. Go to <http://localhost:8501/>
+   - Username: `rbriggs`
+   - Password: `abc` (hashed in `config.yaml`)
 
 ## Editing
 
