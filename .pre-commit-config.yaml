@@ -11,3 +11,11 @@ repos:
     hooks:
       - id: tofu_fmt
       - id: tofu_validate
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
