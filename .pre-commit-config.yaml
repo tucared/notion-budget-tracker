@@ -5,6 +5,9 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
+      - id: check-toml
+      - id: detect-private-key
+        exclude: ^cloud-function/secret-sample/sa-key\.json$
       - id: check-added-large-files
   - repo: https://github.com/tofuutils/pre-commit-opentofu
     rev: v2.1.0
