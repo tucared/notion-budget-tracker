@@ -37,7 +37,7 @@
     ```
 
 - Add/remove dependency
-  
+
     ```shell
     uv add pandas
     uv remove pandas
